@@ -1,44 +1,49 @@
-
-import workspaceRepository from "../repositories/workspace.repository.js"
 import workspaceService from "../services/workspaceService.js"
 
 export const createWorkspaceController = async (req, res) => {
     try {
         const { name } = req.body;
         const owner_id = req.user.id;
-        // Verificar si el token está presente en la cabecera 'Authorization'
-        const authorization_token = req.headers['authorization'];
-        if (!authorization_token) {
-            return res.status(401).json({
-                ok: false,
-                message: "Token no proporcionado",
-            });
-        }
-        // Obtener el token limpio, eliminando el prefijo "Bearer"
-        const token = authorization_token.split(' ')[1];
-        if (!token) {
-            return res.status(401).json({
-                ok: false,
-                message: "Token mal formado",
-            });
-        }
+        // // Verificar si el token está presente en la cabecera 'Authorization'
+        // const authorization_token = req.headers['authorization'];
+        // if (!authorization_token) {
+        //     return res.status(401).json({
+        //         ok: false,
+        //         message: "Token no proporcionado",
+        //     });
+        // }
+        // // Obtener el token limpio, eliminando el prefijo "Bearer"
+        // const token = authorization_token.split(' ')[1];
+        // if (!token) {
+        //     return res.status(401).json({
+        //         ok: false,
+        //         message: "Token mal formado",
+        //     });
+        // }
         // Crear el workspace
         const new_workspace = await workspaceService.createWorkspace({ name, owner_id });
-        console.log("Workspace creado:", new_workspace);
+        // console.log("Workspace creado:", new_workspace);
         // Responder con el token y el workspace
         res.status(201).json({
             ok: true,
             message: "Workspace creado",
             data: {
-                new_workspace,
-                authorization_token: token // Incluir el token aquí
+                new_workspace
             }
         });
     } catch (error) {
-        console.log("Error al registrar:", error);
-        res.status(500).json({
+        console.log("error al registrar", error);
+        if (error.status) {
+            return res.status(400).send({
+                ok: false,
+                status: error.status,
+                message: error.message
+            });
+        }
+        res.status(500).send({
+            status: 500,
             ok: false,
-            message: "Error interno del servidor"
+            message: "internal server error"
         });
     }
 }; 
@@ -110,21 +115,21 @@ export const createWorkspaceController = async (req, res) => {
 //             }
 //         })
 //         console.log("Respuesta completa de la API:", res);
-//     } catch (error) {
-//         console.log("error al registrar", error);
-//         if (error.status) {
-//             return res.status(400).send({
-//                 ok: false,
-//                 status: error.status,
-//                 message: error.message
-//             });
-//         }
-//         res.status(500).send({
-//             status: 500,
-//             ok: false,
-//             message: "internal server error"
-//         });
-//     }
+    // } catch (error) {
+    //     console.log("error al registrar", error);
+    //     if (error.status) {
+    //         return res.status(400).send({
+    //             ok: false,
+    //             status: error.status,
+    //             message: error.message
+    //         });
+    //     }
+    //     res.status(500).send({
+    //         status: 500,
+    //         ok: false,
+    //         message: "internal server error"
+    //     });
+    // }
 
     
 // }
@@ -137,7 +142,7 @@ export const inviteUserToWorkspaceController = async (req, res) => {
         //a la q vamos a invitar
         const {invited_id, workspace_id} = req.params
 
-        const workspace_found = await workspaceService.addNewMember(workspace_id, invited_id, user_id)
+        const workspace_found = await workspaceService.addMember(workspace_id, invited_id, user_id)
         // const workspace_found = await workspaceRepository.addNewMember({owner_id: user_id, invited_id, workspace_id})
         res.json({
             ok: true,

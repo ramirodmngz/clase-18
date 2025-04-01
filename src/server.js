@@ -43,28 +43,28 @@ app.use("/api/auth", authRouter)
 app.use('/api/workspaces', workspace_router)
 app.use("/api/channels", channelRouter)
 //agregado
-app.post('/verify-token', (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1]; // Obtener el token del encabezado
-    if (!token) {
-        return res.status(401).json({ message: 'Token no proporcionado' });
-    }
-    jwt.verify(token, secretKey, (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ message: 'Token no válido' });
-        }
-        res.json({ isValid: true });
-    });
-});
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    const user = users.find(u => u.username === username && u.password === password);
-    if (!user) {
-        return res.status(401).json({ message: 'Credenciales incorrectas' });
-    }
-    // Generar el token
-    const token = jwt.sign({ username: user.username }, secretKey, { expiresIn: '1h' });
-    res.json({ token });
-});
+// app.post('/verify-token', (req, res) => {
+//     const token = req.headers.authorization?.split(' ')[1]; // Obtener el token del encabezado
+//     if (!token) {
+//         return res.status(401).json({ message: 'Token no proporcionado' });
+//     }
+//     jwt.verify(token, secretKey, (err, decoded) => {
+//         if (err) {
+//             return res.status(401).json({ message: 'Token no válido' });
+//         }
+//         res.json({ isValid: true });
+//     });
+// });
+// app.post('/login', (req, res) => {
+//     const { username, password } = req.body;
+//     const user = users.find(u => u.username === username && u.password === password);
+//     if (!user) {
+//         return res.status(401).json({ message: 'Credenciales incorrectas' });
+//     }
+//     // Generar el token
+//     const token = jwt.sign({ username: user.username }, secretKey, { expiresIn: '1h' });
+//     res.json({ token });
+// });
 
 app.get("/api/test/comprar", authMiddleware, (req, res) => {
     console.log(req.user)

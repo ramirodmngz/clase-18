@@ -12,7 +12,7 @@ export const register = async (req, res) => {
     try {
         const { username, 
             email, 
-            password, 
+            password,
             profile_image_base64 
         } = req.body;
 
@@ -39,13 +39,10 @@ export const register = async (req, res) => {
 
         
         await UserRepository.create({username, email, password: passwordHash, verification_token, profile_image_base64});
-        //le vamos a mandar un mail al usuario 
-        //el mail va a ser un link 
-        //<a href="http://localhost:3000/api/auth/verifyEmail?verification_token=asadasdasdasdasdsasd" >verificar email</a>
 
         await sendMail({
             to: email,
-            subject: "valida tu mail",
+            subject: "Valida tu email!",
             html: `<h1>valida tu mail para entrar en nuestra pagina</h1>
             <p>esta validacion es para que puedas entrar en nuestra pagina</p>
             <a href="${ENVIROMENT.URL_BACKEND}/api/auth/verify-email?verification_token=${verification_token}" >verificar email</a>
@@ -87,8 +84,10 @@ export const register = async (req, res) => {
             const { verification_token } = req.query;
             const payload =jwt.verify(verification_token, ENVIROMENT.SECRET_KEY_JWT)
             const {email} = payload
-            const user_found = await UserRepository.verifyUserByEmail(email, verification_token)
-            res.redirect(ENVIROMENT.URL_FRONTEND + "/login") 
+            const user_found = await UserRepository.verifyUserByEmail(email)
+            // const user_found = await UserRepository.verifyUserByEmail(email, verification_token)
+            res.redirect(ENVIROMENT.URL_FRONTEND) 
+            // res.redirect(ENVIROMENT.URL_FRONTEND + "/login") 
             
         }
         catch (error) {
@@ -124,7 +123,6 @@ export const register = async (req, res) => {
 
     export const loginController = async (req, res) => {
         try{
-            console.log(req.tiene_suerte)
             const { email, password } = req.body
             const user_found = await UserRepository.findUserByEmail(email)
             if(!user_found){
