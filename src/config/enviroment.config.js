@@ -12,8 +12,8 @@ const ENVIROMENT = {
     SECRET_KEY_JWT : process.env.SECRET_KEY_JWT,
     GMAIL_PASSWORD : process.env.GMAIL_PASSWORD,
     GMAIL_USERNAME : process.env.GMAIL_USERNAME,
-    URL_BACKEND: process.env.URL_BACKEND || "http://localhost:3000",
-    URL_FRONTEND: process.env.URL_FRONTEND || "http://localhost:5173",
+    URL_BACKEND: process.env.URL_BACKEND,
+    URL_FRONTEND: process.env.URL_FRONTEND,
     MYSQL : {
         DB_NAME: process.env.MYSQL_DB_NAME,
         USERNAME: process.env.MYSQL_USER,
